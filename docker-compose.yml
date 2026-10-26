@@ -1,0 +1,87 @@
+# =============================================================================
+#  F.O.G.O. - Ferramenta Onisciente de Gestão e Operações
+#  Orquestração local: PostgreSQL + FastAPI + React/Vite
+#
+#  Todas as variáveis possuem defaults de DESENVOLVIMENTO para que o avaliador
+#  consiga subir tudo com um único comando. Em qualquer ambiente real, crie um
+#  arquivo `.env` (ver `.env.example`) e sobrescreva as credenciais.
+# =============================================================================
+name: fogo
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: fogo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fogo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fogo_dev_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-fogo}
+      TZ: America/Sao_Paulo
+      PGTZ: America/Sao_Paulo
+    ports:
+      # Exposto apenas no loopback do host (não fica acessível na rede local).
+      # Porta 5433 evita conflito com um PostgreSQL já instalado na máquina.
+      - "127.0.0.1:${POSTGRES_EXPOSED_PORT:-5433}:5432"
+    volumes:
+      - fogo_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks:
+      - fogo-net
+
+  backend:
+    build:
+      context: ./backend
+    container_name: fogo-backend
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fogo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fogo_dev_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-fogo}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      TZ: America/Sao_Paulo
+      # Necessário para hot-reload funcionar com bind mounts no Windows/macOS
+      WATCHFILES_FORCE_POLLING: "true"
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - fogo-net
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: fogo-frontend
+    restart: unless-stopped
+    environment:
+      # O browser do usuário acessa o backend pelo host, não pela rede interna.
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000/api/v1}
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      - ./frontend:/app
+      # Volume anônimo: impede que o bind mount sobrescreva o node_modules do container
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - fogo-net
+
+volumes:
+  fogo_pgdata:
+    name: fogo_pgdata
+
+networks:
+  fogo-net:
+    name: fogo-net

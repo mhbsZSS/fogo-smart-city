@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    @apply h-full;
+  }
+  body {
+    @apply bg-fogo-950 font-sans text-slate-200 antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 10% -10%, rgba(255, 94, 26, 0.12), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 100% 0%, rgba(34, 229, 255, 0.08), transparent 60%);
+    background-attachment: fixed;
+  }
+  ::selection {
+    @apply bg-ember-500/40 text-white;
+  }
+  :fullscreen {
+    background-color: #0a0c14 !important;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded bg-fogo-600;
+  }
+}
+
+@media print {
+  body, #root {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow: visible !important;
+    background-color: #05060a !important;
+    color: #e2e8f0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .panel {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+  }
+  .break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
+.break-inside-avoid {
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+}
+
+@layer components {
+  .panel {
+    @apply relative rounded-xl border border-white/[0.06] bg-fogo-800/70 backdrop-blur-md;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+  }
+  .panel-title {
+    @apply font-display text-[11px] font-bold uppercase tracking-[0.25em] text-slate-400;
+  }
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(34, 229, 255, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 229, 255, 0.07) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .text-glow-ember {
+    text-shadow: 0 0 18px rgba(255, 94, 26, 0.6);
+  }
+  .text-glow-cyan {
+    text-shadow: 0 0 14px rgba(34, 229, 255, 0.55);
+  }
+}
+
+/* ───────── Leaflet popup · glass + neon ─────────
+ * Prefixo .leaflet-container: o leaflet.css é importado depois deste arquivo,
+ * então a especificidade extra garante que estes estilos prevaleçam.
+ * Cor de destaque via --popup-accent (cyan por padrão; magenta em .popup-agente).
+ */
+.leaflet-container .leaflet-popup {
+  --popup-accent: 34, 229, 255;
+  margin-bottom: 14px;
+}
+.leaflet-container .leaflet-popup.popup-agente {
+  --popup-accent: 255, 43, 214;
+}
+
+.leaflet-container .leaflet-popup-content-wrapper {
+  @apply rounded-lg text-slate-200;
+  background: linear-gradient(160deg, rgba(20, 26, 36, 0.82), rgba(10, 13, 19, 0.9));
+  border: 1px solid rgba(var(--popup-accent), 0.35);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 0 18px rgba(var(--popup-accent), 0.25),
+    0 18px 36px -12px rgba(0, 0, 0, 0.75);
+  animation: popup-in 180ms ease-out;
+  transform-origin: bottom center;
+}
+
+/* Barra neon no topo */
+.leaflet-container .leaflet-popup-content-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0 12px auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--popup-accent), 0.9), transparent);
+}
+
+.leaflet-container .leaflet-popup-content {
+  @apply font-mono text-[11px] leading-relaxed;
+  margin: 12px 30px 12px 14px;
+}
+.leaflet-container .leaflet-popup-content .font-semibold {
+  @apply font-display text-xs uppercase tracking-[0.15em];
+  color: rgb(var(--popup-accent));
+  text-shadow: 0 0 10px rgba(var(--popup-accent), 0.55);
+}
+
+.leaflet-container .leaflet-popup-tip {
+  background: rgba(10, 13, 19, 0.92);
+  border: 1px solid rgba(var(--popup-accent), 0.35);
+  box-shadow: 0 0 10px rgba(var(--popup-accent), 0.25);
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  @apply text-slate-500 transition-colors;
+  top: 6px;
+  right: 6px;
+}
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: rgb(var(--popup-accent));
+}
+
+@keyframes popup-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
