@@ -24,6 +24,7 @@
 4. [Funcionalidades Extras & Engenharia de Frontend](#4-funcionalidades-extras--engenharia-de-frontend)
    - Design System Tático (Dark Cyberpunk / Glassmorphism)
    - Dashboard de Triagem e Telemetria em Tempo Real
+   - Data Grids Táticos e Interativos (Ordenação Reativa de Alta Performance)
    - Segregação Arquitetural de UX (Fila Operacional Blindada vs Analytics)
    - Rotina de Auto-Cura de Efetivo (Self-Healing de Frota)
    - Inteligência de Negócios (BI) e Exportação Impressa (`@media print`)
@@ -181,6 +182,11 @@ Ao contrário de dashboards corporativos comuns baseados em temas genéricos, o 
 ### Dashboard de Triagem e Telemetria em Tempo Real
 - **Cards Superiores Interativos:** Métricas agregadas (Total de Ativos, Disponibilidade percentual, Críticos com manutenções vencidas, Ocorrências ativas e Agentes operacionais) com micro-interações `hover:scale-105` e roteamento inteligente via `useNavigate`.
 - **Fila de Manutenção Inteligente:** Exibição ordenada por pesos matemáticos com sinalização visual de datas vencidas e necessidade de intervenção urgente.
+
+### Data Grids Táticos e Interativos (Ordenação Reativa de Alta Performance)
+- **Ordenação em Tempo Real (Client-Side Sort):** Todas as tabelas principais do sistema (**Equipamentos**, **Agentes** e **Ocorrências**) contam com ordenação de colunas em tempo real (ascendente e descendente), processada integralmente na camada de frontend com `localeCompare` e comparação determinística de timestamps.
+- **Priorização Instantânea de Filas:** Permite ao operador e aos despachantes do CICC reorganizar filas instantaneamente por data de manutenção, gravidade do incidente, tipo de unidade ou status operacional com latência zero e feedback visual através de ícones semânticos (`ChevronUp`/`ChevronDown`), sem sobrecarregar a infraestrutura de backend com requisições repetitivas de ordenação.
+- **Harmonia com Filtros Operacionais:** O fluxo de ordenação é perfeitamente integrado com os botões de filtros rápidos de status (pills) e seletores de data, garantindo que o subconjunto de dados filtrado permaneça ordenado dinamicamente durante toda a operação de campo.
 
 ### Segregação Arquitetural de UX (Fila Operacional Blindada vs Analytics)
 - **Foco Tático na Operação em Campo:** No calor da operação de despacho, interfaces poluídas com botões excessivos aumentam a latência decisória e induzem o operador ao erro. A Fila de Despacho & Atendimento (`FilaDespacho.jsx`) foi intencionalmente blindada, removendo gatilhos analíticos de auditoria de IA da tabela operacional.

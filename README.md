@@ -187,6 +187,8 @@ GET    /api/v1/equipamentos                          # Listagem com filtros por 
 GET    /api/v1/equipamentos/resumo                   # Métricas e KPIs agregados para o dashboard
 GET    /api/v1/equipamentos/{id}                     # Detalhes completos do equipamento
 POST   /api/v1/equipamentos                          # Cadastro com validação geográfica e unicidade
+PUT    /api/v1/equipamentos/{id}                     # Edição de dados do ativo
+DELETE /api/v1/equipamentos/{id}                     # Exclusão permanente do ativo
 
 # Agentes, Unidades de Resposta e Auto-Cura
 GET    /api/v1/agentes                               # Listagem de agentes e status de telemetria
