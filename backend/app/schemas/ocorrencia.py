@@ -54,10 +54,12 @@ class OcorrenciaCreate(OcorrenciaBase):
 class OcorrenciaUpdate(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
+    titulo: str | None = Field(None, min_length=3, max_length=150)
+    descricao: str | None = Field(None, min_length=3)
+    tipo: TipoOcorrencia | str | None = None
+    gravidade: GravidadeOcorrencia | str | None = None
     status: StatusOcorrencia | str | None = None
     agente_id: uuid.UUID | None = None
-    descricao: str | None = None
-    gravidade: GravidadeOcorrencia | str | None = None
     data_despacho: datetime | None = None
     data_conclusao: datetime | None = None
     necessita_apoio: bool | None = None

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, Pencil } from 'lucide-react'
 import Header from '../components/Header.jsx'
 import Sidebar from '../components/Sidebar.jsx'
 import OcorrenciaModal from '../components/OcorrenciaModal.jsx'
@@ -7,7 +7,189 @@ import DespachoModal from '../components/DespachoModal.jsx'
 import DetalhesOcorrenciaModal from '../components/DetalhesOcorrenciaModal.jsx'
 import FilaDespacho from '../components/FilaDespacho.jsx'
 import { isManutencao } from '../components/statusConfig.js'
-import { agentesService, checkHealth, ocorrenciasService } from '../services/api.js'
+import { api, agentesService, checkHealth, ocorrenciasService } from '../services/api.js'
+
+function ModalEditarOcorrencia({ isOpen, ocorrencia, onClose, onSalvar, salvando }) {
+  const [formData, setFormData] = useState({
+    titulo: '',
+    descricao: '',
+    tipo: 'ACIDENTE',
+    gravidade: 'MEDIA',
+  })
+  const [erroValidacao, setErroValidacao] = useState(null)
+
+  useEffect(() => {
+    if (ocorrencia) {
+      setFormData({
+        titulo: ocorrencia.titulo || '',
+        descricao: ocorrencia.descricao || '',
+        tipo: ocorrencia.tipo || 'ACIDENTE',
+        gravidade: ocorrencia.gravidade || 'MEDIA',
+      })
+      setErroValidacao(null)
+    }
+  }, [ocorrencia])
+
+  if (!isOpen || !ocorrencia) return null
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!formData.titulo.trim() || formData.titulo.trim().length < 3) {
+      setErroValidacao('O título deve conter pelo menos 3 caracteres.')
+      return
+    }
+    if (!formData.descricao.trim() || formData.descricao.trim().length < 3) {
+      setErroValidacao('A descrição deve conter pelo menos 3 caracteres.')
+      return
+    }
+    setErroValidacao(null)
+    onSalvar({
+      titulo: formData.titulo.trim(),
+      descricao: formData.descricao.trim(),
+      tipo: formData.tipo,
+      gravidade: formData.gravidade,
+    })
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+      <div className="relative w-full max-w-lg rounded-xl border border-cyan-500/50 bg-slate-900 p-6 shadow-[0_0_30px_rgba(34,211,238,0.25)]">
+        {/* Cabeçalho do Modal */}
+        <div className="flex items-center justify-between border-b border-cyan-500/30 pb-4 mb-4">
+          <div className="flex items-center gap-2">
+            <Pencil className="h-5 w-5 text-cyan-400" />
+            <h3 className="font-display text-lg font-bold tracking-wider text-white">
+              EDITAR OCORRÊNCIA
+            </h3>
+          </div>
+          <span className="font-mono text-xs text-cyan-400/90 bg-cyan-950/60 px-2 py-1 rounded border border-cyan-500/30">
+            #{String(ocorrencia.id || '').slice(0, 8).toUpperCase()}
+          </span>
+        </div>
+
+        {erroValidacao && (
+          <div className="mb-4 rounded border border-rose-500/50 bg-rose-500/10 p-2.5 font-mono text-xs text-rose-300">
+            ⚠ {erroValidacao}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Título */}
+          <div>
+            <label className="block text-xs font-mono uppercase tracking-wider text-cyan-400 mb-1.5">
+              Título da Ocorrência *
+            </label>
+            <input
+              type="text"
+              name="titulo"
+              value={formData.titulo}
+              onChange={handleChange}
+              required
+              minLength={3}
+              maxLength={150}
+              placeholder="Ex: Semáforo intermitente em amarelo"
+              className="w-full rounded-md border border-slate-700 bg-slate-800/80 px-3 py-2 text-sm text-white placeholder-slate-500 outline-none transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+            />
+          </div>
+
+          {/* Descrição */}
+          <div>
+            <label className="block text-xs font-mono uppercase tracking-wider text-cyan-400 mb-1.5">
+              Descrição Operacional *
+            </label>
+            <textarea
+              name="descricao"
+              value={formData.descricao}
+              onChange={handleChange}
+              rows={4}
+              required
+              minLength={3}
+              placeholder="Detalhes ou correções da ocorrência..."
+              className="w-full resize-none rounded-md border border-slate-700 bg-slate-800/80 px-3 py-2 text-sm text-white placeholder-slate-500 outline-none transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+            />
+          </div>
+
+          {/* Tipo e Gravidade */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-mono uppercase tracking-wider text-cyan-400 mb-1.5">
+                Tipo *
+              </label>
+              <select
+                name="tipo"
+                value={formData.tipo}
+                onChange={handleChange}
+                className="w-full rounded-md border border-slate-700 bg-slate-800/80 px-3 py-2 text-sm text-white outline-none transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+              >
+                <option value="ACIDENTE">Acidente de Trânsito</option>
+                <option value="TRANSITO">Interdição / Trânsito</option>
+                <option value="DEFESA_CIVIL">Defesa Civil</option>
+                <option value="MANUTENCAO">Manutenção Urbana</option>
+                <option value="ILUMINACAO">Falha Elétrica / LED</option>
+                <option value="SEGURANCA">Segurança Pública</option>
+                <option value="AMBIENTAL">Incidente Ambiental</option>
+                <option value="SAUDE">Resgate / SAMU</option>
+                <option value="ALERTA_CAMPO">Alerta de Campo (Telegram)</option>
+                <option value="OUTRO">Outro</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono uppercase tracking-wider text-cyan-400 mb-1.5">
+                Gravidade *
+              </label>
+              <select
+                name="gravidade"
+                value={formData.gravidade}
+                onChange={handleChange}
+                className="w-full rounded-md border border-slate-700 bg-slate-800/80 px-3 py-2 text-sm text-white outline-none transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+              >
+                <option value="BAIXA">Baixa</option>
+                <option value="MEDIA">Média</option>
+                <option value="ALTA">Alta</option>
+                <option value="CRITICA">Crítica</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Botões de Ação */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+            <button
+              type="button"
+              disabled={salvando}
+              onClick={onClose}
+              className="rounded-md border border-slate-700 px-4 py-2 font-mono text-xs uppercase text-slate-300 transition-colors hover:bg-slate-800 hover:text-white disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={salvando}
+              className="flex items-center gap-2 rounded-md border border-cyan-500 bg-cyan-500/20 px-4 py-2 font-display text-xs font-bold uppercase tracking-wider text-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.25)] transition-all hover:bg-cyan-500/30 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] disabled:opacity-50"
+            >
+              {salvando ? (
+                <>
+                  <span className="animate-spin text-xs">⌛</span>
+                  <span>Salvando...</span>
+                </>
+              ) : (
+                <>
+                  <Pencil className="h-3.5 w-3.5" />
+                  <span>Salvar Alterações</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
 
 export default function Ocorrencias() {
   const [apiOnline, setApiOnline] = useState(null)
@@ -18,10 +200,37 @@ export default function Ocorrencias() {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' })
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDespachoOpen, setIsDespachoOpen] = useState(false)
+  const [modalEditarAberto, setModalEditarAberto] = useState(false)
   const [ocorrenciaSelecionada, setOcorrenciaSelecionada] = useState(null)
+  const [salvandoEdicao, setSalvandoEdicao] = useState(false)
   const [ocorrenciaDetalhe, setOcorrenciaDetalhe] = useState(null)
   const [concluindoId, setConcluindoId] = useState(null)
   const [novoAlerta, setNovoAlerta] = useState(null)
+
+  const handleSalvarEdicao = async (dadosAtualizados) => {
+    if (!ocorrenciaSelecionada?.id) return
+    try {
+      setSalvandoEdicao(true)
+      const resposta = await api.put('/ocorrencias/' + ocorrenciaSelecionada.id, dadosAtualizados)
+      if (resposta.status === 200) {
+        const ocorrenciaAtualizada = resposta.data
+        setOcorrencias((prev) =>
+          (prev || []).map((oc) =>
+            oc?.id === ocorrenciaSelecionada.id ? { ...oc, ...ocorrenciaAtualizada } : oc,
+          ),
+        )
+        setModalEditarAberto(false)
+        setOcorrenciaSelecionada(null)
+        window.dispatchEvent(new CustomEvent('fogo:data-updated'))
+      }
+    } catch (err) {
+      console.error('Erro ao atualizar ocorrência:', err)
+      const msg = err.response?.data?.detail || err.friendlyMessage || err.message || 'Erro ao salvar alterações.'
+      alert(`Falha ao salvar edição: ${typeof msg === 'string' ? msg : JSON.stringify(msg)}`)
+    } finally {
+      setSalvandoEdicao(false)
+    }
+  }
 
   const handleSort = (key) => {
     setSortConfig((prev) => {
@@ -225,6 +434,12 @@ export default function Ocorrencias() {
               setOcorrenciaSelecionada(oc)
               setIsDespachoOpen(true)
             }}
+            onEditar={(ocorrencia) => {
+              setOcorrenciaSelecionada(ocorrencia)
+              setModalEditarAberto(true)
+            }}
+            setOcorrenciaSelecionada={setOcorrenciaSelecionada}
+            setModalEditarAberto={setModalEditarAberto}
             onConcluir={handleEncerrarOcorrencia}
           />
         </main>
@@ -248,6 +463,20 @@ export default function Ocorrencias() {
         fetchAgentes={() => carregar(true)}
         ocorrencia={ocorrenciaSelecionada}
       />
+
+      {/* Modal Tático de Edição de Ocorrência */}
+      {modalEditarAberto && ocorrenciaSelecionada && (
+        <ModalEditarOcorrencia
+          isOpen={modalEditarAberto}
+          ocorrencia={ocorrenciaSelecionada}
+          onClose={() => {
+            setModalEditarAberto(false)
+            setOcorrenciaSelecionada(null)
+          }}
+          onSalvar={handleSalvarEdicao}
+          salvando={salvandoEdicao}
+        />
+      )}
 
       {/* Modal Tático Flutuante: Dossiê e Visão Completa da Ocorrência */}
       {ocorrenciaDetalhe && (

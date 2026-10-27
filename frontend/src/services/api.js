@@ -50,6 +50,7 @@ export const ocorrenciasService = {
   listar: (params = {}) => api.get('/ocorrencias', { params }).then((r) => r.data),
   obter: (id) => api.get(`/ocorrencias/${id}`).then((r) => r.data),
   cadastrar: (payload) => api.post('/ocorrencias', payload).then((r) => r.data),
+  atualizar: (id, payload) => api.put(`/ocorrencias/${id}`, payload).then((r) => r.data),
   despachar: (id, agenteId) =>
     api.put(`/ocorrencias/${id}/despachar`, { agente_id: agenteId }).then((r) => r.data),
   concluirOcorrencia: (id) =>

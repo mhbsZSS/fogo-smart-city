@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, Pencil } from 'lucide-react'
 import { isManutencao } from './statusConfig.js'
 import { ocorrenciasService } from '../services/api.js'
 import DetalhesOcorrenciaModal from './DetalhesOcorrenciaModal.jsx'
@@ -99,6 +99,9 @@ export default function FilaDespacho({
   onConcluir: propOnConcluir,
   concluindoId: propConcluindoId,
   onVerDetalhes,
+  onEditar,
+  setOcorrenciaSelecionada,
+  setModalEditarAberto,
   sortConfig: propSortConfig,
   onSort: propOnSort,
 }) {
@@ -572,7 +575,8 @@ export default function FilaDespacho({
             )}
 
             {!loading &&
-              ocorrenciasFiltradasEOrdenadas.map((oc) => {
+              ocorrenciasFiltradasEOrdenadas.map((ocorrencia) => {
+                const oc = ocorrencia
                 const precisaApoio = Boolean(oc?.necessita_apoio || oc?.status === 'APOIO_SOLICITADO')
                 const grav = GRAVIDADE_BADGES[oc?.gravidade] || GRAVIDADE_BADGES.MEDIA
                 const st = STATUS_BADGES[oc?.status] || (precisaApoio ? STATUS_BADGES.APOIO_SOLICITADO : STATUS_BADGES.PENDENTE)
@@ -761,6 +765,24 @@ export default function FilaDespacho({
                             <span>Resolvida</span>
                           </span>
                         )}
+
+                        {/* Botão de Edição Tática Cyberpunk */}
+                        <button
+                          type="button"
+                          id={`btn-editar-${ocorrencia?.id}`}
+                          title="Editar Ocorrência"
+                          className="p-2 ml-2 border border-cyan-500/50 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 hover:shadow-[0_0_12px_rgba(34,211,238,0.3)] rounded-md transition-all flex items-center justify-center"
+                          onClick={() => {
+                            if (onEditar) {
+                              onEditar(ocorrencia)
+                            } else if (setOcorrenciaSelecionada && setModalEditarAberto) {
+                              setOcorrenciaSelecionada(ocorrencia)
+                              setModalEditarAberto(true)
+                            }
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>

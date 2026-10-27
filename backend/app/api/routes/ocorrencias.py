@@ -333,4 +333,14 @@ async def atualizar_ocorrencia(
 
     await db.commit()
     await db.refresh(ocorrencia)
+
+    await ws_manager.broadcast({
+        "action": "ocorrencia_atualizada",
+        "ocorrencia_id": str(ocorrencia.id),
+        "titulo": ocorrencia.titulo,
+        "tipo": ocorrencia.tipo,
+        "gravidade": ocorrencia.gravidade,
+        "status": ocorrencia.status,
+    })
+
     return ocorrencia
