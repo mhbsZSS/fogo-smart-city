@@ -192,7 +192,12 @@ Ao contrário de dashboards corporativos comuns baseados em temas genéricos, o 
 - **Foco Tático na Operação em Campo:** No calor da operação de despacho, interfaces poluídas com botões excessivos aumentam a latência decisória e induzem o operador ao erro. A Fila de Despacho & Atendimento (`FilaDespacho.jsx`) foi intencionalmente blindada, removendo gatilhos analíticos de auditoria de IA da tabela operacional.
 - **Ações Estritamente Operacionais:** A interface operacional foi reduzida aos seus objetivos fundamentais: `[ ⚡ Despachar Unidade ]` e `[ ✓ Encerrar e Liberar ]`.
 - **Estabilização de Fast Refresh (HMR):** Isolamento de métodos utilitários impuros (ex: `isManutencao`) em `statusConfig.js`, garantindo que componentes táticos mantenham apenas exports funcionais compatíveis com a engine de hot-reload do Vite.
+
+![Fila de Ocorrências e Despacho Operacional](./docs/assets/pag_ocorrencias.jpg)
+
 - **Centralização do Cockpit Analítico:** Todos os diagnósticos de IA do Google Gemini (análise preditiva de hardware, auditoria de SLA e parecer executivo de RH) foram consolidados na página de Inteligência Gerencial (`/relatorios`).
+
+![Data Warehouse Operacional e Oráculo IA](./docs/assets/oraculo_tatico.png)
 
 ### Rotina de Auto-Cura de Efetivo (Self-Healing de Frota)
 - **Mitigação de Estados Inconsistentes:** Incidentes urbanos e testes de encerramento concorrentes podem deixar agentes em status `EM_DESLOCAMENTO` mesmo após o fechamento da ocorrência associada.
@@ -202,6 +207,8 @@ Ao contrário de dashboards corporativos comuns baseados em temas genéricos, o 
 ### Inteligência de Negócios (BI) e Exportação Impressa (`@media print`)
 - Módulo dedicado de relatórios estratégicos (`/relatorios`) com KPIs consolidados: Taxa de Resolução de Chamados, Saúde Geral dos Ativos e Disponibilidade da Frota.
 - **Relatório Executivo para PDF:** Otimização completa de layout via CSS `@media print`, ocultando menus laterais, reformatando fundos para economia de tinta, ajustando tipografia e gerando quebras de página perfeitas diretamente no diálogo do navegador (`window.print()`).
+
+![Painel de Relatórios Gerenciais (BI) e Analytics](./docs/assets/pag_relatorios.jpg)
 
 ### Geocodificação Automática Híbrida (ViaCEP + Nominatim)
 - Ao digitar um CEP válido (faixa de Marília/SP `175xx-xxx`) no cadastro de equipamentos, o sistema consome a API do **ViaCEP** preenchendo automaticamente o logradouro e bairro.

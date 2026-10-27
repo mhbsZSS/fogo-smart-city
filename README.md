@@ -8,6 +8,7 @@
 ## 📋 Sumário
 
 - [Visão Geral](#-visão-geral)
+- [Interface do Sistema (Cockpit Tático)](#-interface-do-sistema-cockpit-tático)
 - [Stack Tecnológica](#-stack-tecnológica)
 - [Pré-requisitos](#-pré-requisitos)
 - [Como Executar o Sistema](#-como-executar-o-sistema)
@@ -23,6 +24,52 @@
 ## 🌐 Visão Geral
 
 O **F.O.G.O.** (**F**erramenta **O**nisciente de **G**estão e **O**perações) centraliza a telemetria, integridade e despacho operacional de ativos críticos de mobilidade urbana (semáforos inteligentes, radares de velocidade, câmeras OCR/CFTV, iluminação pública e sensores ambientais) e equipes em campo (trânsito, guarda municipal, manutenção, defesa civil e resgate médico) em uma única interface tática de alta performance.
+
+---
+
+## 📸 Interface do Sistema (Cockpit Tático)
+
+Abaixo estão as capturas de tela dos módulos centrais do **F.O.G.O.**, ilustrando o padrão estético militar-cyberpunk, a densidade informacional para videowalls e a fluidez das operações de campo:
+
+### 1. Dashboard de Comando
+> Visão panorâmica unificada para Centros Integrados de Comando e Controle (CICC). Agrega telemetria geoespacial de viaturas e ocorrências, métricas operacionais consolidadas e fila de prioridade em tempo real.
+
+![Dashboard de Comando](./docs/assets/pag_dashboard.jpg)
+
+---
+
+### 2. Gestão de Equipamentos
+> Inventário tático de infraestrutura inteligente (semáforos, radares, OCRs e sensores). Dispõe de busca com ordenação dinâmica, geocodificação via CEP e cálculo preditivo de saúde de hardware (MTBF).
+
+![Gestão de Equipamentos](./docs/assets/pag_equipamentos.jpg)
+
+---
+
+### 3. Efetivo em Campo
+> Monitoramento contínuo das forças operacionais (Trânsito, Defesa Civil, SAMU, Guarda Municipal e Manutenção). Apresenta posicionamento geográfico, histórico de despacho e rotina de auto-cura de frota (Self-Healing).
+
+![Efetivo em Campo](./docs/assets/pag_agentes.png)
+
+---
+
+### 4. Gestão de Ocorrências e Despacho
+> Central de atendimento e triagem operacional com tabela reativa de alta performance. Suporta edição ágil de incidentes, despacho inteligente baseado em hard constraints de competência e atendimento a chamados de reforço (1:N).
+
+![Gestão de Ocorrências e Despacho](./docs/assets/pag_ocorrencias.jpg)
+
+---
+
+### 5. Relatórios Gerenciais (BI) e Analytics
+> Painel estratégico de inteligência operacional com indicadores agregados de resposta, disponibilidade de frotas e ativos, além de exportação otimizada para relatórios impressos ou em PDF (`@media print`).
+
+![Relatórios Gerenciais (BI) e Analytics](./docs/assets/pag_relatorios.jpg)
+
+---
+
+### 6. Data Warehouse e Oráculo IA
+> Camada cognitiva alimentada pelo Google Gemini sobre o repositório consolidado de telemetria. Gera diagnósticos preditivos de falhas, auditorias de conformidade de SLA e pareceres de RH para os gestores públicos.
+
+![Data Warehouse e Oráculo IA](./docs/assets/oraculo_tatico.png)
 
 ---
 
