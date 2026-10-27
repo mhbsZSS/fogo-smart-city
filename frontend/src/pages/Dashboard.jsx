@@ -149,7 +149,7 @@ export default function Dashboard() {
               accent="lime"
               loading={loading}
               delay={60}
-              onClick={() => navigate('/agentes')}
+              onClick={() => navigate('/equipamentos')}
             />
             <StatCard
               id="stat-criticos"
